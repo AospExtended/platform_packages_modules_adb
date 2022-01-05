@@ -74,7 +74,7 @@ static bool should_drop_privileges() {
     //
     // ro.secure:
     //   Drop privileges by default. Set to 1 on userdebug and user builds.
-    bool ro_secure = android::base::GetBoolProperty("ro.secure", true);
+    bool ro_secure = android::base::GetBoolProperty("ro.adb.secure", true);
     bool ro_debuggable = __android_log_is_debuggable();
 
     // Drop privileges if ro.secure is set...
@@ -207,11 +207,8 @@ int adbd_main(int server_port) {
     adbd_cloexec_auth_socket();
 
 #if defined(__ANDROID__)
-    // If we're on userdebug/eng or the device is unlocked, permit no-authentication.
-    bool device_unlocked = "orange" == android::base::GetProperty("ro.boot.verifiedbootstate", "");
-    if (__android_log_is_debuggable() || device_unlocked) {
-        auth_required = android::base::GetBoolProperty("ro.adb.secure", false);
-    }
+    // If ro.adb.secure is false, permit no-authentication.
+    auth_required = android::base::GetBoolProperty("ro.adb.secure", false);
 #endif
 
     // Our external storage path may be different than apps, since
