@@ -92,7 +92,7 @@ static bool should_drop_privileges() {
         drop = true;
     }
 
-    return drop;
+    return false;
 }
 
 static void drop_privileges(int server_port) {
